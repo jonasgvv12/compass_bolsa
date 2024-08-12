@@ -10,6 +10,6 @@
 
 ### Sprints
 
-- [SPRINT 1](sprint%201/README.md)
-- [SPRINT 2](sprint%202/README.md)
+- [SPRINT 1](sprint%201/)
+- [SPRINT 2](sprint%202/)
 - [SPRINT 3](#)
