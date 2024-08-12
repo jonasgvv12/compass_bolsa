@@ -1,0 +1,13 @@
+#!/bin/bash
+
+relatorios="/home/jonas/VENDAS/BACKUP"
+arquivo="relatorio_final.txt"
+
+cd "$relatorios" || exit
+
+# 0.1 - parte do script onde checa pela existência de um arquivo .txt para copiar para dentro do novo script
+if ls *.txt 1> /dev/null 2>&1; then
+cat *.txt > "$arquivo"
+else
+echo "não encontrou arquivos $relatorios"
+fi

@@ -1,0 +1,25 @@
+#!/bin/bash
+# 0.1
+data=$(date +%Y%m%d)
+mkdir -p VENDAS
+cp ecommerce/dados_de_vendas.csv VENDAS/
+mkdir -p VENDAS/BACKUP
+cp ecommerce/dados_de_vendas.csv VENDAS/BACKUP/dados-$data.csv
+# 0.2
+mv VENDAS/BACKUP/dados-$data.csv VENDAS/BACKUP/backup-dados-$data.csv
+touch VENDAS/BACKUP/Relatorio.txt 
+data_relatorio=$(date +"%Y-%m-%d %H:%M")
+echo Data de hoje: $data_relatorio > VENDAS/BACKUP/Relatorio.txt
+linha_um=$(head -n 2 VENDAS/BACKUP/backup-dados-$data.csv)
+echo primeira venda: $linha_um >> VENDAS/BACKUP/Relatorio.txt
+ult_linha=$(tail -n 1 VENDAS/BACKUP/backup-dados-$data.csv)
+echo ultima venda: $ult_linha >> VENDAS/BACKUP/Relatorio.txt
+qnt_total=$(wc -l < VENDAS/BACKUP/backup-dados-$data.csv)
+qnt_itens=$(( qnt_total - 1))
+# diminuindo 1 por causa da linha demonstrativa
+echo itens diferentes vendidos: $qnt_itens >> VENDAS/BACKUP/Relatorio.txt
+dez_itens=$(head -n 10 VENDAS/BACKUP/backup-dados-$data.csv)
+echo 10 primeiras linhas: $dez_itens >> VENDAS/BACKUP/Relatorio.txt
+# 0.3
+zip -r backup-dados-$data.zip VENDAS/BACKUP/backup-dados-$data.csv
+rm VENDAS/BACKUP/backup-dados-$data.csv && rm VENDAS/dados_de_vendas.csv
