@@ -12,4 +12,4 @@
 
 - [SPRINT 1](sprint%201/)
 - [SPRINT 2](sprint%202/)
-- [SPRINT 3](#)
+- [SPRINT 3](sprint%203/)
