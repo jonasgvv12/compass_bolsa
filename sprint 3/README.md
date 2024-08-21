@@ -17,3 +17,5 @@
 
 ## CERTIFICADOS
 
+[CERTIFICADO-AWS-SKILLBUILDER](certificados/certificado_awsSkillBuilder-Jonas.pdf)
+
