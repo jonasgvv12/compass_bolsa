@@ -1,7 +1,7 @@
 ### EXERCÍCIOS
 
-[exercicios-pt1](exercícios/exercicios-pt1/)
-[exercicios-pt2](exercícios/exercicios-pt2/)
+1. [exercicios-pt1](exercícios/exercicios-pt1/)
+2. [exercicios-pt2](exercícios/exercicios-pt2/)
 
 
 ## EVIDÊNCIAS
