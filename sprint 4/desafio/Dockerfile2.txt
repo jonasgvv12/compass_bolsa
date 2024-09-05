@@ -1,0 +1,7 @@
+FROM python:3.11
+
+WORKDIR /novo_projeto
+
+COPY mascarar_dados.py .
+
+CMD ["python", "mascarar_dados.py"]
