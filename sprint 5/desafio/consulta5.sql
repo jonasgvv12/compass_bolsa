@@ -1,0 +1,1 @@
+SELECT AVG(CAST(vl_despesa as FLOAT)) AS media_despesa FROM s3object WHERE cd_identificador_rubrica = '339033'

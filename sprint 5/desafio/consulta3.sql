@@ -1,0 +1,1 @@
+SELECT id_despesa, id_projeto, CAST(CAST(vl_unitario AS DECIMAL(10, 2)) AS INT) FROM s3object WHERE CAST(CAST(vl_unitario AS DECIMAL(10, 2)) AS INT) > 100

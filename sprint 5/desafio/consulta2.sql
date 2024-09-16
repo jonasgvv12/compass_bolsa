@@ -1,0 +1,1 @@
+SELECT s.tx_justificativa FROM s3object s WHERE CHAR_LENGTH(s.tx_justificativa) > 25

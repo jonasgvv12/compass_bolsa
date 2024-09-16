@@ -1,0 +1,1 @@
+SELECT s.vl_despesa, CASE WHEN CAST(s.vl_despesa as FLOAT) < 2500 THEN 'grupo 1' WHEN CAST(s.vl_despesa as FLOAT) > 2500 THEN 'grupo 2' END FROM s3object s
