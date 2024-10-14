@@ -1,3 +1,4 @@
 keys.env
 movies.csv
 series.csv
+secrets.py

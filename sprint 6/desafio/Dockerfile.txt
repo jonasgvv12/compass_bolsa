@@ -3,15 +3,11 @@ FROM python:3.12.4-slim
 WORKDIR /app
 
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY script.py .
-COPY keys.env .
-COPY movies.csv .
-COPY series.csv .
-
-RUN mkdir /data
-
-VOLUME ["/data"]
+COPY secrets.py .
+COPY data/ ./data/
 
 CMD ["python", "script.py"]

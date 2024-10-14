@@ -1,41 +1,90 @@
 import boto3
-import pandas as pd
-import os
-from dotenv import load_dotenv
+import logging
+from botocore.exceptions import ClientError
 from datetime import datetime
+import os
+from secrets import AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, BUCKET_NAME
 
-load_dotenv('keys.env')
+# Configuração do logging
+logging.basicConfig(level=logging.INFO)
 
-AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-BUCKET_NAME = 'data-lake-Jonas'
-RAW_ZONE = 'RAW/Local/CSV'
+# Definindo a data atual para a estrutura do bucket
+now = datetime.now()
+DATA_ATUAL = now.strftime('%Y/%m/%d')
 
-arquivos_locais = {
-    'Movies': r'C:\Users\Jonas Gabriel\repo novo git\sprint 6\desafio\movies.csv',
-    'Series': r'C:\Users\Jonas Gabriel\repo novo git\sprint 6\desafio\series.csv'
-}
+# Nomes dos arquivos CSV e chaves S3 correspondentes 
+ARQUIVOS = ['/app/data/movies.csv', '/app/data/series.csv']
+S3_KEYS = [f'Raw/Local/CSV/Movies/{DATA_ATUAL}/movies.csv',
+           f'Raw/Local/CSV/Series/{DATA_ATUAL}/series.csv']
 
-def upload_S3(file_path, data_type):
-    session = boto3.Session(
-        aws_access_key_id=AWS_ACCESS_KEY,
-        aws_secret_access_key=AWS_SECRET_KEY
-    )
-    s3 = session.resource('s3')
-
-    today = datetime.today().strftime('%Y/%m/%d')
-
-
-    s3_path = f'{RAW_ZONE}/{data_type}/{today}/{os.path.basename(file_path)}'
-
+def bucket_exists(bucket_name):
+    """Verifica se um bucket existe no S3."""
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=AWS_ACCESS_KEY, 
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        aws_session_token = AWS_SESSION_TOKEN)
     try:
-        s3.bucket(BUCKET_NAME).upload_file(file_path, s3_path)
-        print(f'Upload de {file_path} concluído com sucesso para {s3_path}')
-    except Exception as e:
-        print(f'Erro no upload de {file_path}: {str(e)}')
+        s3_client.head_bucket(Bucket=bucket_name)
+        return True
+    except ClientError as e:
+        if e.response['Error']['Code'] == '404':
+            logging.error(f'Bucket {bucket_name} não encontrado.')
+        else:
+            logging.error(f'Erro ao verificar o bucket: {e}')
+        return False
 
+def create_bucket(bucket_name, region=None):
+    """Cria um bucket no S3 se ele não existir."""
+    if bucket_exists(bucket_name):
+        logging.info(f'O bucket "{bucket_name}" já existe.')
+        return True
+    
+    try:
+        if region is None:
+            s3_client = boto3.client(
+            's3', 
+            aws_access_key_id=AWS_ACCESS_KEY, 
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            aws_session_token = AWS_SESSION_TOKEN)
+            s3_client.create_bucket(Bucket=bucket_name)
+        else:
+            s3_client = boto3.client(
+            's3', 
+            aws_access_key_id=AWS_ACCESS_KEY, 
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            aws_session_token = AWS_SESSION_TOKEN,
+            region_name=region)                  
+            location = {'LocationConstraint': region}
+            s3_client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration=location)
+        logging.info(f'Bucket "{bucket_name}" criado com sucesso.')
+    except ClientError as e:
+        logging.error(f'Erro ao criar o bucket: {e}')
+        return False
 
-for data_type, file_path in arquivos_locais.items():
-    upload_S3(file_path, data_type)
+    return True
 
+def upload_to_s3(arquivos, bucket_name, s3_keys):
+    """Faz o upload dos arquivos CSV para o S3."""
+    if not bucket_exists(bucket_name):
+        logging.info(f'O bucket "{bucket_name}" não existe e será criado.')
+        if not create_bucket(bucket_name):
+            logging.error("Erro ao criar o bucket. Processo abortado.")
+            return
+    
+    s3_client = boto3.client(
+        's3', 
+        aws_access_key_id=AWS_ACCESS_KEY, 
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        aws_session_token = AWS_SESSION_TOKEN)
 
+    # Fazer o upload dos arquivos para o S3
+    for arquivo, s3_key in zip(arquivos, s3_keys):
+        try:
+            s3_client.upload_file(arquivo, bucket_name, s3_key)
+            logging.info(f'Upload do arquivo {arquivo} realizado com sucesso!')
+        except ClientError as e:
+            logging.error(f'Erro ao realizar o upload do arquivo {arquivo} para {s3_key}: {e}')      
+
+if __name__ == '__main__':
+    upload_to_s3(ARQUIVOS, BUCKET_NAME, S3_KEYS)
