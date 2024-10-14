@@ -7,6 +7,7 @@
 
 - [script python](desafio/script.py)
 - [dockerfile](desafio/Dockerfile.txt)
+- [Criação do bucket](evidências/evidencia_buckets3_sprint6.png)
 
 ### CERTIFICADOS AWS
 
