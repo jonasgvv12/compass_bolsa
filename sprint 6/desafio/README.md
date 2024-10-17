@@ -1,4 +1,4 @@
-### PERGUNTAS
+### PERGUNTAS PARA ANALISE
 
 **Minha análise busca encontrar correlações e discrepâncias entre os dados disponíveis sobre a saga Crepúsculo, tanto sobre os atores/atrizes quanto sobre a saga num modo geral.**
 
