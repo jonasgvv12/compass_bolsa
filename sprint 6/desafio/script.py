@@ -18,7 +18,6 @@ S3_KEYS = [f'Raw/Local/CSV/Movies/{DATA_ATUAL}/movies.csv',
            f'Raw/Local/CSV/Series/{DATA_ATUAL}/series.csv']
 
 def bucket_exists(bucket_name):
-    """Verifica se um bucket existe no S3."""
     s3_client = boto3.client(
         's3',
         aws_access_key_id=AWS_ACCESS_KEY, 
@@ -35,7 +34,6 @@ def bucket_exists(bucket_name):
         return False
 
 def create_bucket(bucket_name, region=None):
-    """Cria um bucket no S3 se ele não existir."""
     if bucket_exists(bucket_name):
         logging.info(f'O bucket "{bucket_name}" já existe.')
         return True
@@ -65,7 +63,6 @@ def create_bucket(bucket_name, region=None):
     return True
 
 def upload_to_s3(arquivos, bucket_name, s3_keys):
-    """Faz o upload dos arquivos CSV para o S3."""
     if not bucket_exists(bucket_name):
         logging.info(f'O bucket "{bucket_name}" não existe e será criado.')
         if not create_bucket(bucket_name):
@@ -78,7 +75,6 @@ def upload_to_s3(arquivos, bucket_name, s3_keys):
         aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
         aws_session_token = AWS_SESSION_TOKEN)
 
-    # Fazer o upload dos arquivos para o S3
     for arquivo, s3_key in zip(arquivos, s3_keys):
         try:
             s3_client.upload_file(arquivo, bucket_name, s3_key)
